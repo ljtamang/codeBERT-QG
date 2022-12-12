@@ -187,3 +187,6 @@ fabric.properties
 # Pipenv
 Pipfile
 Pipfile.lock
+
+#Idea folder
+.idea
