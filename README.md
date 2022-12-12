@@ -1,11 +1,13 @@
-# CodeQA
+# codeBERT-QG
 
-## Experiments on CodeBERT
+## Finetuning codeBERT for Question Generation
 
 ### Dependency
 
 - pip install torch
 - pip install transformers
+- pip install nltk 
+- pip install psutil
 
 ### Data
 
