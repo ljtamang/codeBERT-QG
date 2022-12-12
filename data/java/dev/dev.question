@@ -1,0 +1,100 @@
+When does the iterator not reach the end date ?
+Does the iterator reach the end date yet ?
+What does the iterator not reach yet ?
+What not reached the end date yet ?
+Does it receive intents ?
+Do any runnables wait to be executed ?
+What do any runnables wait ?
+What does it no longer receive ?
+What is waiting to be executed ?
+How can by the caller be executed the resulting httpurlconnection ?
+Does the code serialize one or more requests ?
+Does the code execute them ?
+What does the code serialize ?
+Do further modifications to tx affect rendering ?
+How do a point p transform ?
+How does a transform object compose according to the rule last - specified - first - applied ?
+When did the rule apply ?
+Do by the original transform cx transform the result then ?
+What do by the original transform cx transform then ?
+What do further modifications to tx not affect ?
+When do p transform by tx ?
+What do not affect rendering ?
+What is transforming the result then ?
+What does not obey the randomseed ( ) function in papplet ?
+What does the code randomize ?
+What does this not obey ?
+Does the code randomize the order of the list elements ?
+Does this obey the randomseed ( ) function in papplet ?
+What does not require resource name ?
+Does service type require resource name ?
+What does service type not require ?
+Do we handle any extensions currently ?
+When do we nt handle any extensions ?
+What do we nt handle currently ?
+Does the file have the same name ?
+What does the file not have ?
+In which direction has a filename been sent from the market call ?
+What does not have the same name ?
+What has the same name as the previous file ?
+When been by market delivered it ?
+What do the file have ?
+Has we do nothing if the file has the same name as the previous file if the file has the same name as the previous file ?
+Do the file have the same name as the previous file ?
+Have we download it if the file does not have the same name if the file does not have the same name ?
+What has we do if the file has the same name as the previous file if the file has the same name as the previous file ?
+Does the code return the offset in the pool ?
+What does not contain a member with the specified name ?
+What did this object contain ?
+What does this object not contain ?
+Did this object contain multiple members with the given name ?
+What contains multiple members with the given name ?
+Does this object contain a member with the specified name ?
+Will an exception thrown from one stream prevent closing of the other stream if so configured ?
+What will an exception thrown from one stream not prevent if so configured ?
+Does the code close the proxied input stream ?
+What will not prevent closing of the other stream if so configured ?
+What does the code close ?
+What does not treat the final character as a check digit ?
+What does a reader assume ?
+Will it decoded " extended code 39 " sequences ?
+What will it not decoded ?
+What assumes all encoded data is data ?
+Does a reader treat the final character as a check digit ?
+What does the code create ?
+Does the code create a reader that assumes all encoded data is data , and does not treat the final character as a check digit ?
+Does a reader assume ?
+What does a reader not treat as a check digit ?
+What do this function return if the points are counterclockwise and - 1 if the points are counterclockwise and - 1 ?
+Do this function return 1 if the points are counterclockwise and - 1 if the points are counterclockwise and - 1 ?
+Does rotating the order of the arguments affect the result ?
+What does exchanging any two arguments invert ?
+May this function return the wrong answer for nearly colinear ab and ac ?
+Does it satisfy the following conditions for nearly colinear ab and ac , this function may return the wrong answer for nearly colinear ab and ac , this function may return the wrong answer ?
+Does exchanging any two arguments invert the result ?
+What does it satisfy for nearly colinear ab and ac , this function may return the wrong answer for nearly colinear ab and ac , this function may return the wrong answer ?
+Does this mean ?
+What does it have ?
+What does this mean ?
+What means that for nearly colinear ab and ac , this function may return the wrong answer . <p> like simpleccw ( ) , but returns + 1 if the points are counterclockwise and - 1 if the points are clockwise . it satisfies the following conditions : ( 1 ) robustccw ( a , b , c ) = = 0 if and only if a = = b , b = = c , or c = = a ( 2 ) robustccw ( b , c , a ) = = robustccw ( a , b , c ) for all a , b , c ( 3 ) robustccw ( c , b , a ) = = - robustccw ( a , b , c ) for all a , b , c in other words : ( 1 ) the result is zero if and only if two points are the same . ( 2 ) rotating the order of the arguments does not affect the result . ( 3 ) exchanging any two arguments inverts the result . this function is essentially like taking the sign of the determinant of a , b , c , except that it has additional logic to make sure that the above properties hold even when the three points are coplanar , and to deal with the limitations of floating - point arithmetic . note : a , b and c are expected to be of unit length . otherwise , the ?
+What inverts the result ?
+Does it have additional logic to make sure that the above properties hold even when the three points are coplanar , and to deal with the limitations of floating - point arithmetic ?
+What may we will cause in which case ?
+When does processworkerexit lead to replace this thread ?
+When does main worker run loop . execute them ?
+Do any thrown exception cause thread to die also conservatively ?
+Why do we handle runtimeexception , error ( both of which the specs guarantee that we trap ) and arbitrary throwables separately ?
+What does we get from gettask otherwise otherwise as long as pool is running ?
+Does main worker run loop . execute them repeatedly repeatedly ?
+Where may we will cause thread to die ( breaking loop with completedabruptly true ) without processing the task ?
+Is we wrap them within errors on the way out within errors on the way out ?
+What does afterexecute and the thread ' s uncaughtexceptionhandler have ?
+Do we get the first one ?
+Might a call to beforeexecute throw an exception ?
+How do it return ?
+What gets tasks from queue repeatedly ?
+What leads to replace this thread usually ?
+What do we handle because we can not rethrow throwables within runnable . run , we wrap them within errors on the way out ( to the thread ' s uncaughtexceptionhandler ) separately ?
+What might throw an exception ?
+How do any thrown exception cause thread to die also ?
+What can we not rethrow within runnable ?
