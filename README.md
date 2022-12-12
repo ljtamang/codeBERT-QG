@@ -11,7 +11,7 @@
 
 ### Data
 
-You can download data from [Google Drive](https://drive.google.com/drive/folders/1i04sJNUHwMuDfMV2UfWeQG-Uv8MRw_qh?usp=sharing). Unzip it and move it to `./data`.  
+You can download data from [Google Drive](https://drive.google.com/drive/folders/1YYKW5gfXJ1N6E0ga-gbNXRJ5ZZrz33UM?usp=sharing). Unzip it and move it to `./data`.  
 
 ### Train 
 
@@ -33,7 +33,7 @@ After the training process, several best checkpoints are stored in a folder name
 
 ### Pretrained Model
 
-Java and Python pre-trained models (20 epochs) are available [here](https://drive.google.com/drive/folders/1A_C6O649cXjjpk3KKHIe6eaEU5tBaMLJ?usp=sharing).
+Java pre-trained models (20 epochs) are available [here](https://drive.google.com/drive/folders/1AnTlylVmsb9MLZWz9zxNetwASwd543o7?usp=sharing).
 
 
 
