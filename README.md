@@ -21,7 +21,6 @@ Please run the following scripts:
 
 `bash java_script.sh [gpu-id] [model-name]`
 
-`bash python_script.sh [gpu-id] [model-name]`
 
 ### Inference
 
@@ -29,29 +28,7 @@ After the training process, several best checkpoints are stored in a folder name
 
 `bash java_script_test.sh [gpu-id] [model-name]`
 
+
 ### Pretrained Model
 
 Java pre-trained models (20 epochs) are available [here](https://drive.google.com/drive/folders/1AnTlylVmsb9MLZWz9zxNetwASwd543o7?usp=sharing).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
