@@ -11,7 +11,8 @@
 
 ### Data
 
-You can download codeQG data from [Google Drive](https://drive.google.com/drive/folders/1YYKW5gfXJ1N6E0ga-gbNXRJ5ZZrz33UM?usp=sharing).  Download, unzipped it and put direcotry 'data' at same level as direcotry 'code' ( don't put inside code folder).
+The data used for this project is located in the folder 'data'.
+
 ### Train 
 
 We fine-tune the model on 3*1080Ti GPUs.
