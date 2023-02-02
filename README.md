@@ -11,7 +11,7 @@
 
 ### Data
 
-You can download data from [Google Drive](https://drive.google.com/drive/folders/1YYKW5gfXJ1N6E0ga-gbNXRJ5ZZrz33UM?usp=sharing). Unzip it and move it to `./data`.  
+You can download codeQG data from [Google Drive](https://drive.google.com/drive/folders/1YYKW5gfXJ1N6E0ga-gbNXRJ5ZZrz33UM?usp=sharing). Put all train, dev and test folder into folder na `./data`.  
 
 ### Train 
 
