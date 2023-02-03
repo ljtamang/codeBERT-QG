@@ -7,9 +7,9 @@ source_length=200
 target_length=50
 data_dir=../data
 output_dir=../output/$2
-train_file=$data_dir/$lang/train/
-dev_file=$data_dir/$lang/dev/
-test_file=$data_dir/$lang/test/
+train_file=$data_dir/train/
+dev_file=$data_dir/dev/
+test_file=$data_dir/test/
 epochs=20
 pretrained_model=microsoft/codebert-base #Roberta: roberta-base
 
