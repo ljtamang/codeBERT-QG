@@ -54,14 +54,16 @@ class Example(object):
     """A single training/test example."""
     def __init__(self,
                  idx,
-                 source_question,
                  source_code,
-                 target,
+                 source_comment,
+                 source_ans,
+                 target_ques
                  ):
-        self.idx = idx
-        self.source_question = source_question
-        self.source_code = source_code
-        self.target = target
+        self.idx = idx,
+        self.source_code = source_code,
+        self.source_comment = source_comment,
+        self.source_ans = source_ans,
+        self.target_ques = target_ques
 
 class AverageMeter(object):
     """Computes and stores the average and current value."""
@@ -83,27 +85,31 @@ class AverageMeter(object):
 
 def read_examples(filename, stage):
     """Read examples from filename."""
-    # filename: e.g. $data_dir/$lang/train/
+    # filename: e.g. $data_dir/train/
     # stage: e.g. train
     examples=[]
     idx = 0
     codefile = os.path.join(filename, stage + ".code")
-    quesfile = os.path.join(filename, stage + ".question")
+    commentfile = os.path.join(filename, stage + ".comment")
     ansfile = os.path.join(filename, stage + ".answer")
+    quesfile = os.path.join(filename, stage + ".question")
     with open(codefile,encoding="utf-8") as code_f:
+      with open(commentfile, encoding="utf-8") as comment_f:
         with open(ansfile, encoding="utf-8") as ans_f:
             with open(quesfile, encoding="utf-8") as ques_f:
-                for codeline, quesline, ansline in zip(code_f,ques_f,ans_f):
+                for codeline, commentline, ansline, quesline in zip(code_f,comment_f,ans_f,ques_f):
                     code = codeline.strip()
-                    question = quesline.strip()
+                    comment = commentline.strip()
                     ans = ansline.strip()
+                    ques = quesline.strip()
                     examples.append(
                         Example(
                                 idx = idx,
                                 # source= question + " " + code,
-                                source_question = question,
                                 source_code = code,
-                                target = ans,
+                                source_comment = comment,
+                                source_ans = ans,
+                                target_ques = ques
                                 )
                     )
                     idx += 1
@@ -189,10 +195,10 @@ def set_seed(seed=42):
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
-        
-def main():
-    parser = argparse.ArgumentParser()
 
+
+
+def set_argument(parser):
     ## Required parameters  
     parser.add_argument("--model_type", default=None, type=str, required=True,
                         help="Model type: e.g. roberta")
@@ -262,6 +268,13 @@ def main():
                         help="For distributed training: local_rank")   
     parser.add_argument('--seed', type=int, default=42,
                         help="random seed for initialization")
+
+def main():
+
+    parser = argparse.ArgumentParser()
+    set_argument(parser)
+
+    
     # print arguments
     args = parser.parse_args()
     logger.info(args)
@@ -294,27 +307,13 @@ def main():
     logger.warning("Process rank: %s, device: %s, n_gpu: %s, distributed training: %s",
                     args.local_rank, device, args.n_gpu, bool(args.local_rank != -1))
     args.device = device
-    # print(f'args.local_rank : {args.local_rank}')
-    # print(f'args.no_cuda : {args.no_cuda}')
-    # print(f'args.n_gpu : {args.n_gpu}')
-
+   
     # Set seed
     set_seed(args.seed)
-    # print(f'args.seed : {args.seed}')
-
-        
+   
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path) # microsoft/codebert-base
-    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,do_lower_case=args.do_lower_case) #  # microsoft/codebert-base, o_lower_case = flase
-    # print(f'config_class : {config_class}')
-    # print(f'model_class : {model_class}')
-    # print(f'tokenizer_class : {tokenizer_class}')
-    # print(f'config : {config}')
-    # print(f'args.config_name : {args.config_name}')
-    # print(f'args.model_name_or_path : {args.model_name_or_path}')
-    # print(f'args.do_lower_case: {args.do_lower_case}')
-    
-  
+    config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path) 
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,do_lower_case=args.do_lower_case) 
    
     #budild model
     encoder = model_class.from_pretrained(args.model_name_or_path,config=config)  # used microsoft/codebert-base  
@@ -326,17 +325,6 @@ def main():
     if args.load_model_path is not None:
         logger.info("reload model from {}".format(args.load_model_path))
         model.load_state_dict(torch.load(args.load_model_path))
-    # print(f'model_class: {model_class}')
-    # print(f'args.model_name_or_path: {args.model_name_or_path}')
-    # print(f'config: {config}')
-    # print(f'config.hidden_size: {config.hidden_size}')
-    # print(f'config.num_attention_heads: {config.num_attention_heads}')
-    # print(f'args.beam_size: {args.beam_size}')
-    # print(f'args.max_target_length: {args.max_target_length}')
-    # print(f'tokenizer.cls_token_id: {tokenizer.cls_token_id}')
-    # print(f'tokenizer.sep_token_id: {tokenizer.sep_token_id}')
-    # print(f'args.load_model_path: {args.load_model_path}')
-    
         
     model.to(device) # Sent model to GPU
     if args.local_rank != -1:
@@ -352,14 +340,15 @@ def main():
         model = torch.nn.DataParallel(model)
 
     if args.do_train:
-        # Prepare training data loader
+        #Prepare training data loader
         train_examples = read_examples(args.train_filename, 'train')
-        train_features = convert_examples_to_features(train_examples, tokenizer,args,stage='train')
-        all_source_ids = torch.tensor([f.source_ids for f in train_features], dtype=torch.long)
-        all_source_mask = torch.tensor([f.source_mask for f in train_features], dtype=torch.long)
-        all_target_ids = torch.tensor([f.target_ids for f in train_features], dtype=torch.long)
-        all_target_mask = torch.tensor([f.target_mask for f in train_features], dtype=torch.long)    
-        train_data = TensorDataset(all_source_ids,all_source_mask,all_target_ids,all_target_mask)
+        train_features = convert_examples_to_features(train_examples, tokenizer, args, stage='train')
+        # all_source_ids = torch.tensor([f.source_ids for f in train_features], dtype=torch.long)
+        # all_source_mask = torch.tensor([f.source_mask for f in train_features], dtype=torch.long)
+        # all_target_ids = torch.tensor([f.target_ids for f in train_features], dtype=torch.long)
+        # all_target_mask = torch.tensor([f.target_mask for f in train_features], dtype=torch.long)    
+        # train_data = TensorDataset(all_source_ids,all_source_mask,all_target_ids,all_target_mask)
+
         
     #     if args.local_rank == -1:
     #         train_sampler = RandomSampler(train_data)
@@ -693,5 +682,4 @@ def normalize_answer(s):
                 
 if __name__ == "__main__":
     main()
-
 
