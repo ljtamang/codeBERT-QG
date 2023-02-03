@@ -4,7 +4,7 @@ cd code
 lr=5e-5
 batch_size=32
 beam_size=10
-source_length=200 
+source_length=400
 target_length=50
 data_dir=../data
 output_dir=../output/$2
