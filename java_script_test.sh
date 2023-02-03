@@ -29,8 +29,3 @@ CUDA_VISIBLE_DEVICES=$1 python run.py \
     --num_train_epochs $epochs \
     --do_test \
     --load_model_path ../output/$2/checkpoint-best-bleu/pytorch_model.bin
-
-
-
-
-
