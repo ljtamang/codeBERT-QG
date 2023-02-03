@@ -280,6 +280,7 @@ def main():
         logfile = logging.FileHandler(log_file, 'w')
     logfile.setFormatter(fmt)
     logger.addHandler(logfile)
+    # print(f'args.output_dir : {args.output_dir}')
 
     # Setup CUDA, GPU & distributed training
     if args.local_rank == -1 or args.no_cuda:
@@ -293,16 +294,30 @@ def main():
     logger.warning("Process rank: %s, device: %s, n_gpu: %s, distributed training: %s",
                     args.local_rank, device, args.n_gpu, bool(args.local_rank != -1))
     args.device = device
+    # print(f'args.local_rank : {args.local_rank}')
+    # print(f'args.no_cuda : {args.no_cuda}')
+    # print(f'args.n_gpu : {args.n_gpu}')
+
     # Set seed
     set_seed(args.seed)
+    # print(f'args.seed : {args.seed}')
 
         
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path)
-    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,do_lower_case=args.do_lower_case)
+    config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path) # microsoft/codebert-base
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,do_lower_case=args.do_lower_case) #  # microsoft/codebert-base, o_lower_case = flase
+    # print(f'config_class : {config_class}')
+    # print(f'model_class : {model_class}')
+    # print(f'tokenizer_class : {tokenizer_class}')
+    # print(f'config : {config}')
+    # print(f'args.config_name : {args.config_name}')
+    # print(f'args.model_name_or_path : {args.model_name_or_path}')
+    # print(f'args.do_lower_case: {args.do_lower_case}')
     
+  
+   
     #budild model
-    encoder = model_class.from_pretrained(args.model_name_or_path,config=config)    
+    encoder = model_class.from_pretrained(args.model_name_or_path,config=config)  # used microsoft/codebert-base  
     decoder_layer = nn.TransformerDecoderLayer(d_model=config.hidden_size, nhead=config.num_attention_heads)
     decoder = nn.TransformerDecoder(decoder_layer, num_layers=6)
     model=Seq2Seq(encoder=encoder,decoder=decoder,config=config,
@@ -311,8 +326,19 @@ def main():
     if args.load_model_path is not None:
         logger.info("reload model from {}".format(args.load_model_path))
         model.load_state_dict(torch.load(args.load_model_path))
+    # print(f'model_class: {model_class}')
+    # print(f'args.model_name_or_path: {args.model_name_or_path}')
+    # print(f'config: {config}')
+    # print(f'config.hidden_size: {config.hidden_size}')
+    # print(f'config.num_attention_heads: {config.num_attention_heads}')
+    # print(f'args.beam_size: {args.beam_size}')
+    # print(f'args.max_target_length: {args.max_target_length}')
+    # print(f'tokenizer.cls_token_id: {tokenizer.cls_token_id}')
+    # print(f'tokenizer.sep_token_id: {tokenizer.sep_token_id}')
+    # print(f'args.load_model_path: {args.load_model_path}')
+    
         
-    model.to(device)
+    model.to(device) # Sent model to GPU
     if args.local_rank != -1:
         # Distributed training
         try:
@@ -335,258 +361,258 @@ def main():
         all_target_mask = torch.tensor([f.target_mask for f in train_features], dtype=torch.long)    
         train_data = TensorDataset(all_source_ids,all_source_mask,all_target_ids,all_target_mask)
         
-        if args.local_rank == -1:
-            train_sampler = RandomSampler(train_data)
-        else:
-            train_sampler = DistributedSampler(train_data)
-        train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=args.train_batch_size//args.gradient_accumulation_steps)
+    #     if args.local_rank == -1:
+    #         train_sampler = RandomSampler(train_data)
+    #     else:
+    #         train_sampler = DistributedSampler(train_data)
+    #     train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=args.train_batch_size//args.gradient_accumulation_steps)
 
-        num_train_optimization_steps =  args.train_steps
+    #     num_train_optimization_steps =  args.train_steps
 
-        # Prepare optimizer and schedule (linear warmup and decay)
-        no_decay = ['bias', 'LayerNorm.weight']
-        optimizer_grouped_parameters = [
-            {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
-             'weight_decay': args.weight_decay},
-            {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
-        ]
-        t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
-        optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
-        scheduler = get_linear_schedule_with_warmup(optimizer,
-                                                    num_warmup_steps=int(t_total*0.1),
-                                                    num_training_steps=t_total)
+    #     # Prepare optimizer and schedule (linear warmup and decay)
+    #     no_decay = ['bias', 'LayerNorm.weight']
+    #     optimizer_grouped_parameters = [
+    #         {'params': [p for n, p in model.named_parameters() if not any(nd in n for nd in no_decay)],
+    #          'weight_decay': args.weight_decay},
+    #         {'params': [p for n, p in model.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+    #     ]
+    #     t_total = len(train_dataloader) // args.gradient_accumulation_steps * args.num_train_epochs
+    #     optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate, eps=args.adam_epsilon)
+    #     scheduler = get_linear_schedule_with_warmup(optimizer,
+    #                                                 num_warmup_steps=int(t_total*0.1),
+    #                                                 num_training_steps=t_total)
     
-        #Start training
-        logger.info("***** Running training *****")
-        logger.info("  Num examples = %d", len(train_examples))
-        logger.info("  Batch size = %d", args.train_batch_size)
-        logger.info("  Num epoch = %d", args.num_train_epochs)
+    #     #Start training
+    #     logger.info("***** Running training *****")
+    #     logger.info("  Num examples = %d", len(train_examples))
+    #     logger.info("  Batch size = %d", args.train_batch_size)
+    #     logger.info("  Num epoch = %d", args.num_train_epochs)
         
 
-        model.train()
-        dev_dataset={}
-        nb_tr_examples, nb_tr_steps,tr_loss,global_step,best_bleu,best_loss = 0, 0,0,0,0,1e6 
-        for epoch in range(args.num_train_epochs):
-            bar = tqdm(train_dataloader,total=len(train_dataloader))
-            for batch in bar:
-                batch = tuple(t.to(device) for t in batch)
-                source_ids,source_mask,target_ids,target_mask = batch
-                loss,_,_ = model(source_ids=source_ids,source_mask=source_mask,target_ids=target_ids,target_mask=target_mask)
+    #     model.train()
+    #     dev_dataset={}
+    #     nb_tr_examples, nb_tr_steps,tr_loss,global_step,best_bleu,best_loss = 0, 0,0,0,0,1e6 
+    #     for epoch in range(args.num_train_epochs):
+    #         bar = tqdm(train_dataloader,total=len(train_dataloader))
+    #         for batch in bar:
+    #             batch = tuple(t.to(device) for t in batch)
+    #             source_ids,source_mask,target_ids,target_mask = batch
+    #             loss,_,_ = model(source_ids=source_ids,source_mask=source_mask,target_ids=target_ids,target_mask=target_mask)
 
-                if args.n_gpu > 1:
-                    loss = loss.mean() # mean() to average on multi-gpu.
-                if args.gradient_accumulation_steps > 1:
-                    loss = loss / args.gradient_accumulation_steps
-                tr_loss += loss.item()
-                train_loss=round(tr_loss*args.gradient_accumulation_steps/(nb_tr_steps+1),4)
-                bar.set_description("epoch {} loss {}".format(epoch,train_loss))
-                nb_tr_examples += source_ids.size(0)
-                nb_tr_steps += 1
-                loss.backward()
+    #             if args.n_gpu > 1:
+    #                 loss = loss.mean() # mean() to average on multi-gpu.
+    #             if args.gradient_accumulation_steps > 1:
+    #                 loss = loss / args.gradient_accumulation_steps
+    #             tr_loss += loss.item()
+    #             train_loss=round(tr_loss*args.gradient_accumulation_steps/(nb_tr_steps+1),4)
+    #             bar.set_description("epoch {} loss {}".format(epoch,train_loss))
+    #             nb_tr_examples += source_ids.size(0)
+    #             nb_tr_steps += 1
+    #             loss.backward()
 
-                if (nb_tr_steps + 1) % args.gradient_accumulation_steps == 0:
-                    #Update parameters
-                    optimizer.step()
-                    optimizer.zero_grad()
-                    scheduler.step()
-                    global_step += 1
+    #             if (nb_tr_steps + 1) % args.gradient_accumulation_steps == 0:
+    #                 #Update parameters
+    #                 optimizer.step()
+    #                 optimizer.zero_grad()
+    #                 scheduler.step()
+    #                 global_step += 1
 
-            if args.do_eval:
-                #Eval model with dev dataset
-                tr_loss = 0
-                nb_tr_examples, nb_tr_steps = 0, 0                     
-                eval_flag=False    
-                if 'dev_loss' in dev_dataset:
-                    eval_examples,eval_data=dev_dataset['dev_loss']
-                else:
-                    eval_examples = read_examples(args.dev_filename, 'dev')
-                    eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='dev')
-                    all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
-                    all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)
-                    all_target_ids = torch.tensor([f.target_ids for f in eval_features], dtype=torch.long)
-                    all_target_mask = torch.tensor([f.target_mask for f in eval_features], dtype=torch.long)      
-                    eval_data = TensorDataset(all_source_ids,all_source_mask,all_target_ids,all_target_mask)   
-                    dev_dataset['dev_loss']=eval_examples,eval_data
-                eval_sampler = SequentialSampler(eval_data)
-                eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
+    #         if args.do_eval:
+    #             #Eval model with dev dataset
+    #             tr_loss = 0
+    #             nb_tr_examples, nb_tr_steps = 0, 0                     
+    #             eval_flag=False    
+    #             if 'dev_loss' in dev_dataset:
+    #                 eval_examples,eval_data=dev_dataset['dev_loss']
+    #             else:
+    #                 eval_examples = read_examples(args.dev_filename, 'dev')
+    #                 eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='dev')
+    #                 all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
+    #                 all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)
+    #                 all_target_ids = torch.tensor([f.target_ids for f in eval_features], dtype=torch.long)
+    #                 all_target_mask = torch.tensor([f.target_mask for f in eval_features], dtype=torch.long)      
+    #                 eval_data = TensorDataset(all_source_ids,all_source_mask,all_target_ids,all_target_mask)   
+    #                 dev_dataset['dev_loss']=eval_examples,eval_data
+    #             eval_sampler = SequentialSampler(eval_data)
+    #             eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-                logger.info("\n***** Running evaluation *****")
-                logger.info("  Num examples = %d", len(eval_examples))
-                logger.info("  Batch size = %d", args.eval_batch_size)
+    #             logger.info("\n***** Running evaluation *****")
+    #             logger.info("  Num examples = %d", len(eval_examples))
+    #             logger.info("  Batch size = %d", args.eval_batch_size)
 
-                #Start Evaling model
-                model.eval()
-                eval_loss,tokens_num = 0,0
-                for batch in eval_dataloader:
-                    batch = tuple(t.to(device) for t in batch)
-                    source_ids,source_mask,target_ids,target_mask = batch                  
+    #             #Start Evaling model
+    #             model.eval()
+    #             eval_loss,tokens_num = 0,0
+    #             for batch in eval_dataloader:
+    #                 batch = tuple(t.to(device) for t in batch)
+    #                 source_ids,source_mask,target_ids,target_mask = batch                  
 
-                    with torch.no_grad():
-                        _,loss,num = model(source_ids=source_ids,source_mask=source_mask,
-                                           target_ids=target_ids,target_mask=target_mask)     
-                    eval_loss += loss.sum().item()
-                    tokens_num += num.sum().item()
-                #Pring loss of dev dataset    
-                model.train()
-                eval_loss = eval_loss / tokens_num
-                result = {'eval_ppl': round(np.exp(eval_loss),5),
-                          'global_step': global_step+1,
-                          'train_loss': round(train_loss,5)}
-                for key in sorted(result.keys()):
-                    logger.info("  %s = %s", key, str(result[key]))
-                logger.info("  "+"*"*20)   
+    #                 with torch.no_grad():
+    #                     _,loss,num = model(source_ids=source_ids,source_mask=source_mask,
+    #                                        target_ids=target_ids,target_mask=target_mask)     
+    #                 eval_loss += loss.sum().item()
+    #                 tokens_num += num.sum().item()
+    #             #Pring loss of dev dataset    
+    #             model.train()
+    #             eval_loss = eval_loss / tokens_num
+    #             result = {'eval_ppl': round(np.exp(eval_loss),5),
+    #                       'global_step': global_step+1,
+    #                       'train_loss': round(train_loss,5)}
+    #             for key in sorted(result.keys()):
+    #                 logger.info("  %s = %s", key, str(result[key]))
+    #             logger.info("  "+"*"*20)   
 
-                #save last checkpoint
-                last_output_dir = os.path.join(args.output_dir, 'checkpoint-last')
-                if not os.path.exists(last_output_dir):
-                    os.makedirs(last_output_dir)
-                model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
-                output_model_file = os.path.join(last_output_dir, "pytorch_model.bin")
-                torch.save(model_to_save.state_dict(), output_model_file)                    
-                if eval_loss<best_loss:
-                    logger.info("  Best ppl:%s",round(np.exp(eval_loss),5))
-                    logger.info("  "+"*"*20)
-                    best_loss=eval_loss
-                    # Save best checkpoint for best ppl
-                    output_dir = os.path.join(args.output_dir, 'checkpoint-best-ppl')
-                    if not os.path.exists(output_dir):
-                        os.makedirs(output_dir)
-                    model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
-                    output_model_file = os.path.join(output_dir, "pytorch_model.bin")
-                    torch.save(model_to_save.state_dict(), output_model_file)  
-
-
-                #Calculate bleu  
-                if 'dev_bleu' in dev_dataset:
-                    eval_examples,eval_data=dev_dataset['dev_bleu']
-                else:
-                    eval_examples = read_examples(args.dev_filename, 'dev')
-                    eval_examples = random.sample(eval_examples,min(1000,len(eval_examples)))
-                    eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='test')
-                    all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
-                    all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)    
-                    eval_data = TensorDataset(all_source_ids,all_source_mask)   
-                    dev_dataset['dev_bleu']=eval_examples,eval_data
+    #             #save last checkpoint
+    #             last_output_dir = os.path.join(args.output_dir, 'checkpoint-last')
+    #             if not os.path.exists(last_output_dir):
+    #                 os.makedirs(last_output_dir)
+    #             model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
+    #             output_model_file = os.path.join(last_output_dir, "pytorch_model.bin")
+    #             torch.save(model_to_save.state_dict(), output_model_file)                    
+    #             if eval_loss<best_loss:
+    #                 logger.info("  Best ppl:%s",round(np.exp(eval_loss),5))
+    #                 logger.info("  "+"*"*20)
+    #                 best_loss=eval_loss
+    #                 # Save best checkpoint for best ppl
+    #                 output_dir = os.path.join(args.output_dir, 'checkpoint-best-ppl')
+    #                 if not os.path.exists(output_dir):
+    #                     os.makedirs(output_dir)
+    #                 model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
+    #                 output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+    #                 torch.save(model_to_save.state_dict(), output_model_file)  
 
 
+    #             #Calculate bleu  
+    #             if 'dev_bleu' in dev_dataset:
+    #                 eval_examples,eval_data=dev_dataset['dev_bleu']
+    #             else:
+    #                 eval_examples = read_examples(args.dev_filename, 'dev')
+    #                 eval_examples = random.sample(eval_examples,min(1000,len(eval_examples)))
+    #                 eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='test')
+    #                 all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
+    #                 all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)    
+    #                 eval_data = TensorDataset(all_source_ids,all_source_mask)   
+    #                 dev_dataset['dev_bleu']=eval_examples,eval_data
 
-                eval_sampler = SequentialSampler(eval_data)
-                eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-                model.eval() 
-                p=[]
-                for batch in eval_dataloader:
-                    batch = tuple(t.to(device) for t in batch)
-                    source_ids,source_mask= batch                  
-                    with torch.no_grad():
-                        preds = model(source_ids=source_ids,source_mask=source_mask)  
-                        for pred in preds:
-                            t=pred[0].cpu().numpy()
-                            t=list(t)
-                            if 0 in t:
-                                t=t[:t.index(0)]
-                            text = tokenizer.decode(t,clean_up_tokenization_spaces=False)
-                            p.append(text)
-                model.train()
-                predictions=[]
-                id = 0
-                hypotheses, references = dict(), dict()
-                with open(os.path.join(args.output_dir,"dev.output"),'w') as f, open(os.path.join(args.output_dir,"dev.gold"),'w') as f1:
-                    for ref,gold in zip(p,eval_examples):
-                        predictions.append(str(gold.idx)+'\t'+ref)
-                        f.write(str(gold.idx)+'\t'+ref+'\n')
-                        f1.write(str(gold.idx)+'\t'+gold.target+'\n')
-                        hypotheses[id] = [ref]
-                        references[id] = [gold.target]
-                        id += 1
 
-                EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
-                                                                                  references)
-                """
-                CodeBert smoothed bleu-4 provided in "CodeBERT: A Pre-Trained Model for Programming and Natural Languages" paper. 
-                It will produce a much higher bleu score than "A Transformer-based Approach for Source Code Summarization" paper.
-                In CodeQA, we use the latter to compute bleu. 
-                """
-                (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "dev.gold"))
-                dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
+    #             eval_sampler = SequentialSampler(eval_data)
+    #             eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-                logger.info('dev set: '
-                            'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
-                            (bleu4, rouge_l, meteor) +
-                            'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
-                            (EM, precision, recall, f1))
-                logger.info("  " + "*" * 20)
+    #             model.eval() 
+    #             p=[]
+    #             for batch in eval_dataloader:
+    #                 batch = tuple(t.to(device) for t in batch)
+    #                 source_ids,source_mask= batch                  
+    #                 with torch.no_grad():
+    #                     preds = model(source_ids=source_ids,source_mask=source_mask)  
+    #                     for pred in preds:
+    #                         t=pred[0].cpu().numpy()
+    #                         t=list(t)
+    #                         if 0 in t:
+    #                             t=t[:t.index(0)]
+    #                         text = tokenizer.decode(t,clean_up_tokenization_spaces=False)
+    #                         p.append(text)
+    #             model.train()
+    #             predictions=[]
+    #             id = 0
+    #             hypotheses, references = dict(), dict()
+    #             with open(os.path.join(args.output_dir,"dev.output"),'w') as f, open(os.path.join(args.output_dir,"dev.gold"),'w') as f1:
+    #                 for ref,gold in zip(p,eval_examples):
+    #                     predictions.append(str(gold.idx)+'\t'+ref)
+    #                     f.write(str(gold.idx)+'\t'+ref+'\n')
+    #                     f1.write(str(gold.idx)+'\t'+gold.target+'\n')
+    #                     hypotheses[id] = [ref]
+    #                     references[id] = [gold.target]
+    #                     id += 1
 
-                if bleu4>best_bleu:
-                    logger.info("  Best bleu:%s",bleu4)
-                    logger.info("  "+"*"*20)
-                    best_bleu=bleu4
-                    # Save best checkpoint for best bleu
-                    output_dir = os.path.join(args.output_dir, 'checkpoint-best-bleu')
-                    if not os.path.exists(output_dir):
-                        os.makedirs(output_dir)
-                    model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
-                    output_model_file = os.path.join(output_dir, "pytorch_model.bin")
-                    torch.save(model_to_save.state_dict(), output_model_file)
+    #             EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
+    #                                                                               references)
+    #             """
+    #             CodeBert smoothed bleu-4 provided in "CodeBERT: A Pre-Trained Model for Programming and Natural Languages" paper. 
+    #             It will produce a much higher bleu score than "A Transformer-based Approach for Source Code Summarization" paper.
+    #             In CodeQA, we use the latter to compute bleu. 
+    #             """
+    #             (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "dev.gold"))
+    #             dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
+
+    #             logger.info('dev set: '
+    #                         'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
+    #                         (bleu4, rouge_l, meteor) +
+    #                         'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
+    #                         (EM, precision, recall, f1))
+    #             logger.info("  " + "*" * 20)
+
+    #             if bleu4>best_bleu:
+    #                 logger.info("  Best bleu:%s",bleu4)
+    #                 logger.info("  "+"*"*20)
+    #                 best_bleu=bleu4
+    #                 # Save best checkpoint for best bleu
+    #                 output_dir = os.path.join(args.output_dir, 'checkpoint-best-bleu')
+    #                 if not os.path.exists(output_dir):
+    #                     os.makedirs(output_dir)
+    #                 model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
+    #                 output_model_file = os.path.join(output_dir, "pytorch_model.bin")
+    #                 torch.save(model_to_save.state_dict(), output_model_file)
 
                
-    if args.do_test:
-        files=[]
-        if args.test_filename is not None:
-            files.append(args.test_filename)
-        for idx,file in enumerate(files):   
-            logger.info("Test file: {}".format(file))
-            eval_examples = read_examples(file, 'test')
-            eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='test')
-            all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
-            all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)    
-            eval_data = TensorDataset(all_source_ids,all_source_mask)   
+    # if args.do_test:
+    #     files=[]
+    #     if args.test_filename is not None:
+    #         files.append(args.test_filename)
+    #     for idx,file in enumerate(files):   
+    #         logger.info("Test file: {}".format(file))
+    #         eval_examples = read_examples(file, 'test')
+    #         eval_features = convert_examples_to_features(eval_examples, tokenizer, args,stage='test')
+    #         all_source_ids = torch.tensor([f.source_ids for f in eval_features], dtype=torch.long)
+    #         all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)    
+    #         eval_data = TensorDataset(all_source_ids,all_source_mask)   
 
-            # Calculate bleu
-            eval_sampler = SequentialSampler(eval_data)
-            eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
+    #         # Calculate bleu
+    #         eval_sampler = SequentialSampler(eval_data)
+    #         eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-            model.eval() 
-            p=[]
-            for batch in tqdm(eval_dataloader,total=len(eval_dataloader)):
-                batch = tuple(t.to(device) for t in batch)
-                source_ids,source_mask= batch                  
-                with torch.no_grad():
-                    preds = model(source_ids=source_ids,source_mask=source_mask)  
-                    for pred in preds:
-                        t=pred[0].cpu().numpy()
-                        t=list(t)
-                        if 0 in t:
-                            t=t[:t.index(0)]
-                        text = tokenizer.decode(t,clean_up_tokenization_spaces=False)
-                        p.append(text)
-                # break #DEBUG
-            model.train()
-            predictions=[]
-            id = 0
-            hypotheses, references = dict(), dict()
-            with open(os.path.join(args.output_dir,"test_{}.output".format(str(idx))),'w') as f, open(os.path.join(args.output_dir,"test_{}.gold".format(str(idx))),'w') as f1:
-                for ref,gold in zip(p,eval_examples):
-                    predictions.append(str(gold.idx)+'\t'+ref)
-                    f.write(str(gold.idx)+'\t'+ref+'\n') # ref is actually the hypothesis
-                    f1.write(str(gold.idx)+'\t'+gold.target+'\n')
-                    hypotheses[id] = [ref]
-                    references[id] = [gold.target]
-                    id += 1
+    #         model.eval() 
+    #         p=[]
+    #         for batch in tqdm(eval_dataloader,total=len(eval_dataloader)):
+    #             batch = tuple(t.to(device) for t in batch)
+    #             source_ids,source_mask= batch                  
+    #             with torch.no_grad():
+    #                 preds = model(source_ids=source_ids,source_mask=source_mask)  
+    #                 for pred in preds:
+    #                     t=pred[0].cpu().numpy()
+    #                     t=list(t)
+    #                     if 0 in t:
+    #                         t=t[:t.index(0)]
+    #                     text = tokenizer.decode(t,clean_up_tokenization_spaces=False)
+    #                     p.append(text)
+    #             # break #DEBUG
+    #         model.train()
+    #         predictions=[]
+    #         id = 0
+    #         hypotheses, references = dict(), dict()
+    #         with open(os.path.join(args.output_dir,"test_{}.output".format(str(idx))),'w') as f, open(os.path.join(args.output_dir,"test_{}.gold".format(str(idx))),'w') as f1:
+    #             for ref,gold in zip(p,eval_examples):
+    #                 predictions.append(str(gold.idx)+'\t'+ref)
+    #                 f.write(str(gold.idx)+'\t'+ref+'\n') # ref is actually the hypothesis
+    #                 f1.write(str(gold.idx)+'\t'+gold.target+'\n')
+    #                 hypotheses[id] = [ref]
+    #                 references[id] = [gold.target]
+    #                 id += 1
 
-            EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
-                                                                               references)
+    #         EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
+    #                                                                            references)
 
-            # CodeBert smoothed bleu-4
-            (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "test_{}.gold".format(idx)))
-            dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
+    #         # CodeBert smoothed bleu-4
+    #         (goldMap, predictionMap) = bleu.computeMaps(predictions, os.path.join(args.output_dir, "test_{}.gold".format(idx)))
+    #         dev_bleu=round(bleu.bleuFromMaps(goldMap, predictionMap)[0],2)
 
-            logger.info('test set: '
-                        'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
-                        (bleu4, rouge_l, meteor) +
-                        'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
-                        (EM, precision, recall, f1))
-            logger.info("  "+"*"*20)    
+    #         logger.info('test set: '
+    #                     'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
+    #                     (bleu4, rouge_l, meteor) +
+    #                     'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
+    #                     (EM, precision, recall, f1))
+    #         logger.info("  "+"*"*20)    
 
 
 def eval_accuracies(hypotheses, references):
