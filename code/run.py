@@ -311,7 +311,7 @@ def main():
     args = parser.parse_args()
     logger.info(args)
 
-    # logger.setLevel(logging.INFO)
+    logger.setLevel(logging.INFO)
     fmt = logging.Formatter('%(asctime)s: [ %(message)s ]',
                             '%m/%d/%Y %I:%M:%S %p')
 
