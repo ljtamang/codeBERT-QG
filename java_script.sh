@@ -4,14 +4,14 @@ cd code
 lr=5e-5
 batch_size=32
 beam_size=10
-source_length=304
+source_length=254
 target_length=52
 data_dir=../data
 output_dir=../output/$2
 train_file=$data_dir/train/
 dev_file=$data_dir/dev/
 test_file=$data_dir/test/
-epochs=20
+epochs=15
 pretrained_model=microsoft/codebert-base #Roberta: roberta-base
 
 CUDA_VISIBLE_DEVICES=$1 python run.py \
