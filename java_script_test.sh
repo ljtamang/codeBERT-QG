@@ -1,5 +1,4 @@
 cd code
-lang=java #programming language
 lr=5e-5
 batch_size=32
 beam_size=10
