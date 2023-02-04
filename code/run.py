@@ -141,7 +141,7 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         # Setting for max length of ans, comment, and code
         max_ans_length = 25
         max_comment_length = 75 
-        max_code_length = 200
+        max_code_length = 100
      
         # Source
         source_ans_tokens = tokenizer.tokenize(example.source_ans)
@@ -405,6 +405,11 @@ def main():
         logger.info("  Num examples = %d", len(train_examples))
         logger.info("  Batch size = %d", args.train_batch_size)
         logger.info("  Num epoch = %d", args.num_train_epochs)
+
+        logger.warning("***** Running training *****")
+        logger.warning("  Num examples = %d", len(train_examples))
+        logger.warning("  Batch size = %d", args.train_batch_size)
+        logger.warning("  Num epoch = %d", args.num_train_epochs)
         
 
         model.train()
@@ -457,6 +462,10 @@ def main():
                 logger.info("\n***** Running evaluation *****")
                 logger.info("  Num examples = %d", len(eval_examples))
                 logger.info("  Batch size = %d", args.eval_batch_size)
+
+                logger.warning("\n***** Running evaluation *****")
+                logger.warning("  Num examples = %d", len(eval_examples))
+                logger.warning("  Batch size = %d", args.eval_batch_size)
 
                 #Start Evaling model
                 model.eval()
@@ -630,7 +639,14 @@ def main():
                         (bleu4, rouge_l, meteor) +
                         'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
                         (EM, precision, recall, f1))
-            logger.info("  "+"*"*20)    
+            logger.info("  "+"*"*20) 
+
+            logger.warning('test set: '
+                        'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
+                        (bleu4, rouge_l, meteor) +
+                        'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
+                        (EM, precision, recall, f1))
+            logger.warning("  "+"*"*20)     
 
 
 def eval_accuracies(hypotheses, references):
