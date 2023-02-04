@@ -206,13 +206,6 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
             )
         )
 
-        print(source_ids)
-        print(source_mask)
-        print(target_ids)
-        print(target_mask)
-        print('----------------')
-
-        
     return features
 
 
