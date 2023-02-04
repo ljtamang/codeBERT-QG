@@ -554,9 +554,9 @@ def main():
                     for ref,gold in zip(p,eval_examples):
                         predictions.append(str(gold.idx)+'\t'+ref)
                         f.write(str(gold.idx)+'\t'+ref+'\n')
-                        f1.write(str(gold.idx)+'\t'+gold.target+'\n')
+                        f1.write(str(gold.idx)+'\t'+gold.target_ques+'\n')
                         hypotheses[id] = [ref]
-                        references[id] = [gold.target]
+                        references[id] = [gold.target_ques]
                         id += 1
 
                 print("start eval_accuracies") # Delete
@@ -641,9 +641,9 @@ def main():
                 for ref,gold in zip(p,eval_examples):
                     predictions.append(str(gold.idx)+'\t'+ref)
                     f.write(str(gold.idx)+'\t'+ref+'\n') # ref is actually the hypothesis
-                    f1.write(str(gold.idx)+'\t'+gold.target+'\n')
+                    f1.write(str(gold.idx)+'\t'+gold.target_ques+'\n')
                     hypotheses[id] = [ref]
-                    references[id] = [gold.target]
+                    references[id] = [gold.target_ques]
                     id += 1
 
             EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
