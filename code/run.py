@@ -140,8 +140,8 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         
         # Setting for max length of ans, comment, and code
         max_ans_length = 25
-        max_comment_length = 125 
-        max_code_length = 250
+        max_comment_length = 75 
+        max_code_length = 200
      
         # Source
         source_ans_tokens = tokenizer.tokenize(example.source_ans)
@@ -205,7 +205,7 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
                  target_mask,
             )
         )
-
+        
     return features
 
 
