@@ -413,7 +413,6 @@ def main():
         dev_dataset={}
         nb_tr_examples, nb_tr_steps,tr_loss,global_step,best_bleu,best_loss = 0, 0,0,0,0,1e6 
         for epoch in range(args.num_train_epochs):
-            print(f"Training epoch: {epoch}") # Delete
             bar = tqdm(train_dataloader,total=len(train_dataloader))
             for batch in bar:
                 batch = tuple(t.to(device) for t in batch)
