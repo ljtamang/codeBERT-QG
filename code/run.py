@@ -141,7 +141,7 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         # Setting for max length of ans, comment, and code
         max_ans_length = 25
         max_comment_length = 75 
-        max_code_length = 100
+        max_code_length = 200
      
         # Source
         source_ans_tokens = tokenizer.tokenize(example.source_ans)
@@ -149,7 +149,7 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         source_code_tokens = tokenizer.tokenize(example.source_code)
         total_tok_count = len(source_ans_tokens) + len(source_comment_tokens) + len(source_code_tokens)
         
-        # When total token counts exceeds (max-source-length-4) i.e 400
+        # When total token counts exceeds (max-source-length-4) 
         if(total_tok_count > args.max_source_length-4):
           source_ans_tokens = source_ans_tokens[:max_ans_length]
 
@@ -371,7 +371,7 @@ def main():
     if args.do_train:
         #Prepare training data loader
         train_examples = read_examples(args.train_filename, 'train')
-        train_features = convert_examples_to_features(train_examples[:3], tokenizer, args, stage='train')
+        train_features = convert_examples_to_features(train_examples, tokenizer, args, stage='train')
         all_source_ids = torch.tensor([f.source_ids for f in train_features], dtype=torch.long)
         all_source_mask = torch.tensor([f.source_mask for f in train_features], dtype=torch.long)
         all_target_ids = torch.tensor([f.target_ids for f in train_features], dtype=torch.long)
@@ -416,6 +416,7 @@ def main():
         dev_dataset={}
         nb_tr_examples, nb_tr_steps,tr_loss,global_step,best_bleu,best_loss = 0, 0,0,0,0,1e6 
         for epoch in range(args.num_train_epochs):
+            print(f"Training epoch: {epoch}") # Delete
             bar = tqdm(train_dataloader,total=len(train_dataloader))
             for batch in bar:
                 batch = tuple(t.to(device) for t in batch)
@@ -441,6 +442,7 @@ def main():
                     global_step += 1
 
             if args.do_eval:
+                print("started Evaluation") # Delete
                 #Eval model with dev dataset
                 tr_loss = 0
                 nb_tr_examples, nb_tr_steps = 0, 0                     
@@ -490,6 +492,7 @@ def main():
                 logger.info("  "+"*"*20)   
 
                 #save last checkpoint
+                print("started save last checkpoint") # Delete
                 last_output_dir = os.path.join(args.output_dir, 'checkpoint-last')
                 if not os.path.exists(last_output_dir):
                     os.makedirs(last_output_dir)
@@ -509,7 +512,8 @@ def main():
                     torch.save(model_to_save.state_dict(), output_model_file)  
 
 
-                #Calculate bleu  
+                #Calculate bleu 
+                print("started Calculate bleu") # Delete 
                 if 'dev_bleu' in dev_dataset:
                     eval_examples,eval_data=dev_dataset['dev_bleu']
                 else:
@@ -520,6 +524,7 @@ def main():
                     all_source_mask = torch.tensor([f.source_mask for f in eval_features], dtype=torch.long)    
                     eval_data = TensorDataset(all_source_ids,all_source_mask)   
                     dev_dataset['dev_bleu']=eval_examples,eval_data
+                print("finished Calculate bleu") # Delete
 
 
 
@@ -543,6 +548,7 @@ def main():
                 model.train()
                 predictions=[]
                 id = 0
+                print("start references, ") # Delete
                 hypotheses, references = dict(), dict()
                 with open(os.path.join(args.output_dir,"dev.output"),'w') as f, open(os.path.join(args.output_dir,"dev.gold"),'w') as f1:
                     for ref,gold in zip(p,eval_examples):
@@ -553,8 +559,10 @@ def main():
                         references[id] = [gold.target]
                         id += 1
 
+                print("start eval_accuracies") # Delete
                 EM, bleu4, rouge_l, meteor, precision, recall, f1 = eval_accuracies(hypotheses,
                                                                                   references)
+                print("end eval_accuracies") # Delete
                 """
                 CodeBert smoothed bleu-4 provided in "CodeBERT: A Pre-Trained Model for Programming and Natural Languages" paper. 
                 It will produce a much higher bleu score than "A Transformer-based Approach for Source Code Summarization" paper.
@@ -570,20 +578,31 @@ def main():
                             (EM, precision, recall, f1))
                 logger.info("  " + "*" * 20)
 
+                logger.warning('dev set: '
+                            'bleu = %.2f | rouge_l = %.2f | meteor = %.2f | ' %
+                            (bleu4, rouge_l, meteor) +
+                            'EM = %.2f | Precision = %.2f | Recall = %.2f | F1 = %.2f | ' %
+                            (EM, precision, recall, f1))
+                logger.warning("  " + "*" * 20)
+
+
                 if bleu4>best_bleu:
                     logger.info("  Best bleu:%s",bleu4)
                     logger.info("  "+"*"*20)
                     best_bleu=bleu4
                     # Save best checkpoint for best bleu
+                    print("START Save best checkpoint for best bleu") # Delete
                     output_dir = os.path.join(args.output_dir, 'checkpoint-best-bleu')
                     if not os.path.exists(output_dir):
                         os.makedirs(output_dir)
                     model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
                     output_model_file = os.path.join(output_dir, "pytorch_model.bin")
                     torch.save(model_to_save.state_dict(), output_model_file)
-
+                    print("END Save best checkpoint for best bleu") # Delete
+                print("finshed eval") # Delete
                
     if args.do_test:
+        print(f"Started Trainng") # Delete
         files=[]
         if args.test_filename is not None:
             files.append(args.test_filename)
@@ -681,7 +700,7 @@ def eval_accuracies(hypotheses, references):
         precision.update(_prec)
         recall.update(_rec)
         f1.update(_f1)
-
+    print("Returning eval accuracies")
     return EM.avg * 100, bleu * 100, rouge_l * 100, meteor * 100, precision.avg * 100, \
            recall.avg * 100, f1.avg * 100
 
