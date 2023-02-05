@@ -456,7 +456,6 @@ def main():
                 eval_sampler = SequentialSampler(eval_data)
                 eval_dataloader = DataLoader(eval_data, sampler=eval_sampler, batch_size=args.eval_batch_size)
 
-                print(f"Running evaluation.....") # Delete
                 logger.info("\n***** Running evaluation *****")
                 logger.info("  Num examples = %d", len(eval_examples))
                 logger.info("  Batch size = %d", args.eval_batch_size)
@@ -576,7 +575,7 @@ def main():
                     torch.save(model_to_save.state_dict(), output_model_file)
                
     if args.do_test:
-        print(f"Running Testing.....") # Delete
+        logger.info("\n***** Running Test *****")
         files=[]
         if args.test_filename is not None:
             files.append(args.test_filename)
