@@ -2,7 +2,7 @@
 cd code
 #lang=java #programming language
 lr=5e-5
-batch_size=64
+batch_size=32
 beam_size=10
 #source_length=404 #when input is answer + comment + code
 source_length=360 #when input is answer + comment
