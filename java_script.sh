@@ -4,9 +4,7 @@ cd code
 lr=5e-5
 batch_size=32
 beam_size=10
-#source_length=404 #when input is answer + comment + code
-source_length=360 #when input is answer + comment
-#source_length=398 #when input is answer + code
+source_length=404 
 target_length=52
 data_dir=../data
 output_dir=../output/$2
