@@ -1,0 +1,20 @@
+detects desktop from $ desktop_session
+detects desktop from $ desktop_session
+called by the locationlayer when the layer is removed from the map . the locationhandler should release expensive resources if this is called .
+called by the locationlayer when the layer is removed from the map . the locationhandler should release expensive resources if this is called .
+called by the locationlayer when the layer is removed from the map . the locationhandler should release expensive resources if this is called .
+deletes the user type of a existing user
+this method allows to register a transformation .
+add a schema name , thereby incrementing counts .
+creates the policy tree , ou = policy , ou = services , . . .
+creates a new native object that is based at the given native address .
+creates a new native object that is based at the given native address .
+creates a new native object that is based at the given native address .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+update the visibility model with the associated jtextfield ( if there is one ) to reflect the current visibility as a result of changes to the document model . the bounded range properties are updated . if the view hasn ' t yet been shown the extent will be zero and we just set it to be full until determined otherwise .
+creates a description string that is shown in error dialogs .
