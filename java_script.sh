@@ -2,9 +2,11 @@
 cd code
 #lang=java #programming language
 lr=5e-5
-batch_size=32
+batch_size=64
 beam_size=10
-source_length=254
+#source_length=404 #when input is answer + comment + code
+source_length=344 #when input is answer + comment
+#source_length=344 #when input is answer + code
 target_length=52
 data_dir=../data
 output_dir=../output/$2
