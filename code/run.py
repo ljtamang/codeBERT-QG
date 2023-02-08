@@ -138,31 +138,11 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
     features = []
     for example_index, example in enumerate(examples):
         
-        # Setting for max length of ans, comment, and code
-        # max_ans_length = 25
-        # max_comment_length = 75 
-        # max_code_length = 200
-        max_ans_length = 15
-        max_comment_length = 75 
-        max_code_length = 160
-     
+      
         # Source
         source_ans_tokens = tokenizer.tokenize(example.source_ans)
         source_comment_tokens = tokenizer.tokenize(example.source_comment)
         source_code_tokens = tokenizer.tokenize(example.source_code)
-        total_tok_count = len(source_ans_tokens) + len(source_comment_tokens) + len(source_code_tokens)
-        
-        # When total token counts exceeds (max-source-length-4) 
-        if(total_tok_count > args.max_source_length-4):
-          source_ans_tokens = source_ans_tokens[:max_ans_length]
-
-          bonus_length = max_ans_length-len(source_ans_tokens)
-          if len(source_code_tokens) < max_code_length:
-            bonus_length = bonus_length + (max_code_length - len(source_code_tokens)) 
-          source_comment_tokens = source_comment_tokens[:max_comment_length + bonus_length]
-
-          bonus_length = (max_ans_length + max_comment_length) - (len(source_ans_tokens) + len(source_comment_tokens))
-          source_code_tokens = source_code_tokens[:max_code_length + bonus_length]
 
         source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_comment_tokens + [tokenizer.sep_token] + source_code_tokens
         source_tokens = [tokenizer.cls_token] + source_tokens + [tokenizer.sep_token] 
@@ -178,6 +158,7 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         if stage=="test":
             target_tokens = tokenizer.tokenize("None")
         else:
+            #target_tokens = tokenizer.tokenize(example.target_ques)[:args.max_target_length-2]
             target_tokens = tokenizer.tokenize(example.target_ques)[:args.max_target_length-2]
         target_tokens = [tokenizer.cls_token]+target_tokens+[tokenizer.sep_token]            
         target_ids = tokenizer.convert_tokens_to_ids(target_tokens)
