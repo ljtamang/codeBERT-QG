@@ -145,9 +145,9 @@ def convert_examples_to_features(examples, tokenizer, args,stage=None):
         source_code_tokens = tokenizer.tokenize(example.source_code)
 
         # when the input is ans, code and comment
-        # source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_comment_tokens + [tokenizer.sep_token] + source_code_tokens
+        source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_comment_tokens + [tokenizer.sep_token] + source_code_tokens
         # when the input is ans and comment
-        source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_comment_tokens 
+        #source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_comment_tokens 
         # when the input is ans and code
         # source_tokens = source_ans_tokens + [tokenizer.sep_token] + source_code_tokens
 
